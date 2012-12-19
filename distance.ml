@@ -1,3 +1,4 @@
+(* calculation of the formula *)
 let lum_rgb i j m=
   let iof x = int_of_float(x) in
   let foi y = float_of_int(y) in
@@ -5,6 +6,10 @@ let lum_rgb i j m=
   iof((0.2126 *. foi(r)) +. (0.7152 *. foi(g)) +. (0.0722 *. foi(b)))
 ;;
 
+(************************************************************
+ * give in back of theses 8 functions the result of lum_rgb *
+ * between p and his neighbors                              *
+ ************************************************************)
 let distance_lum_haut i j m =
   if((i+1) >= (hauteur m)-1) then
     -1
@@ -62,7 +67,6 @@ let distance_lum_haut_droite i j m =
     abs((lum_rgb i j m) - (lum_rgb (i+1) (j+1) m))
 ;;
 
-
 let is_noneg x =
   if(x !=  -1) then
     1
@@ -70,6 +74,9 @@ let is_noneg x =
     0
 ;;
 
+(*
+ * Try to know for h b d and g if this parameters are empty or not  
+ *)
 let nb_voisins h b d g =
   (is_noneg h) + (is_noneg b) + (is_noneg d) + (is_noneg g)
 ;;
@@ -85,7 +92,10 @@ let distance_lum_4 i j m =
   let gauche = distance_lum_gauche i j m in
   (haut + bas + droite + gauche)/(nb_voisins haut bas droite gauche)
 ;;
-
+(*
+ * PS : i m not satisfied of this function,
+ * will try to do better
+ *)
 let distance_lum_8 i j m =
 
   let haut = distance_lum_haut i j m in
