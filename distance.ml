@@ -1,33 +1,4 @@
-(*ocamlc graphics.cma ppm.cmo main.ml -o projet && ./projet test-1.ppm*)
-
-open Graphics;;
-
-let color_to_rgb c = (c asr 16,  (c asr 8) land 255, c land 255);;
-
-let soi x = 
-  string_of_int (x)
-;;
-
-(* Largeur image sous forme textuelle*)
-let str_largeur img =
-  string_of_int(Array.length img.(0));;
-(* Hauteur image sous forme textuelle*)
-let str_hauteur img = 
-  string_of_int(Array.length img);;
-
-(* Largeur image sous forme numerique*)
-let largeur img =
-  Array.length img.(0)
-;;
-(* Hauteur image sous forme numerique*)
-let hauteur img = 
-  Array.length img
-;;
-
-(*
-  calcul de la lumu
-  iof = int_of_float
-  foi = float_of_
+(* calculation of the formula *)
 let lum_rgb i j m=
   let iof x = int_of_float(x) in
   let foi y = float_of_int(y) in
@@ -35,6 +6,10 @@ let lum_rgb i j m=
   iof((0.2126 *. foi(r)) +. (0.7152 *. foi(g)) +. (0.0722 *. foi(b)))
 ;;
 
+(************************************************************
+ * give in back of theses 8 functions the result of lum_rgb *
+ * between p and his neighbors                              *
+ ************************************************************)
 let distance_lum_haut i j m =
   if((i+1) >= (hauteur m)-1) then
     -1
@@ -92,7 +67,6 @@ let distance_lum_haut_droite i j m =
     abs((lum_rgb i j m) - (lum_rgb (i+1) (j+1) m))
 ;;
 
-
 let is_noneg x =
   if(x !=  -1) then
     1
@@ -100,6 +74,9 @@ let is_noneg x =
     0
 ;;
 
+(*
+ * Try to know for h b d and g if this parameters are empty or not  
+ *)
 let nb_voisins h b d g =
   (is_noneg h) + (is_noneg b) + (is_noneg d) + (is_noneg g)
 ;;
@@ -115,7 +92,10 @@ let distance_lum_4 i j m =
   let gauche = distance_lum_gauche i j m in
   (haut + bas + droite + gauche)/(nb_voisins haut bas droite gauche)
 ;;
-
+(*
+ * PS : i m not satisfied of this function,
+ * will try to do better
+ *)
 let distance_lum_8 i j m =
 
   let haut = distance_lum_haut i j m in
@@ -133,6 +113,8 @@ let distance_lum_8 i j m =
   (a + c)/(b + d)
 ;;
 
+
+(* parcours des pixels de l'image et application d'une fonction f*)
 let matrice_luminosite m = 
   let aux = Array.make_matrix (hauteur m) (largeur m) m.(0).(0) in
   for i = 0 to (hauteur m)-1 do
@@ -143,11 +125,3 @@ let matrice_luminosite m =
   done;
   aux
 ;;
-*)
-
-(* Main **********************************************************************)
-let img = Ppm.load Sys.argv.(1);;
-Graphics.open_graph (" " ^ (str_largeur img) ^ "x" ^ (str_hauteur img) ^ "");;
-Graphics.draw_image (Graphics.make_image (matrice_energie img)) 0 0;;
-ignore(Graphics.read_key());;
-Graphics.close_graph() ;;
