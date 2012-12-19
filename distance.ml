@@ -1,33 +1,3 @@
-(*ocamlc graphics.cma ppm.cmo main.ml -o projet && ./projet test-1.ppm*)
-
-open Graphics;;
-
-let color_to_rgb c = (c asr 16,  (c asr 8) land 255, c land 255);;
-
-let soi x = 
-  string_of_int (x)
-;;
-
-(* Largeur image sous forme textuelle*)
-let str_largeur img =
-  string_of_int(Array.length img.(0));;
-(* Hauteur image sous forme textuelle*)
-let str_hauteur img = 
-  string_of_int(Array.length img);;
-
-(* Largeur image sous forme numerique*)
-let largeur img =
-  Array.length img.(0)
-;;
-(* Hauteur image sous forme numerique*)
-let hauteur img = 
-  Array.length img
-;;
-
-(*
-  calcul de la lumu
-  iof = int_of_float
-  foi = float_of_
 let lum_rgb i j m=
   let iof x = int_of_float(x) in
   let foi y = float_of_int(y) in
@@ -133,6 +103,8 @@ let distance_lum_8 i j m =
   (a + c)/(b + d)
 ;;
 
+
+(* parcours des pixels de l'image et application d'une fonction f*)
 let matrice_luminosite m = 
   let aux = Array.make_matrix (hauteur m) (largeur m) m.(0).(0) in
   for i = 0 to (hauteur m)-1 do
@@ -143,11 +115,3 @@ let matrice_luminosite m =
   done;
   aux
 ;;
-*)
-
-(* Main **********************************************************************)
-let img = Ppm.load Sys.argv.(1);;
-Graphics.open_graph (" " ^ (str_largeur img) ^ "x" ^ (str_hauteur img) ^ "");;
-Graphics.draw_image (Graphics.make_image (matrice_energie img)) 0 0;;
-ignore(Graphics.read_key());;
-Graphics.close_graph() ;;
