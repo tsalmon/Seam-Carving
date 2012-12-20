@@ -1,12 +1,6 @@
-(*ocamlc graphics.cma ppm.cmo main.ml -o projet && ./projet test-1.ppm*)
-
+(*ocamlc graphics.cma ppm.cmo distance.ml main.ml -o projet && ./projet test-1.ppm*)
+open Distance;;
 open Graphics;;
-
-let color_to_rgb c = (c asr 16,  (c asr 8) land 255, c land 255);;
-
-let soi x = 
-  string_of_int (x)
-;;
 
 (* Largeur image sous forme textuelle*)
 let str_largeur img =
@@ -15,139 +9,26 @@ let str_largeur img =
 let str_hauteur img = 
   string_of_int(Array.length img);;
 
-(* Largeur image sous forme numerique*)
-let largeur img =
-  Array.length img.(0)
-;;
-(* Hauteur image sous forme numerique*)
-let hauteur img = 
-  Array.length img
-;;
 
-(*
-  calcul de la lumu
-  iof = int_of_float
-  foi = float_of_
-let lum_rgb i j m=
-  let iof x = int_of_float(x) in
-  let foi y = float_of_int(y) in
-  let (r, g, b) = color_to_rgb m.(i).(j) in 
-  iof((0.2126 *. foi(r)) +. (0.7152 *. foi(g)) +. (0.0722 *. foi(b)))
-;;
-
-let distance_lum_haut i j m =
-  if((i+1) >= (hauteur m)-1) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb (i+1) j m)) 	
-;;
-
-let distance_lum_haut_gauche i j m =
-  if(((i+1) >= (hauteur m)-1) || (j-1 < 0)) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb (i+1) (j-1) m)) 	
-;;
-
-let distance_lum_gauche i j m =
-  if((j-1) < 0 ) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb i (j-1) m))
-;;
-
-let distance_lum_bas_gauche i j m =
-  if((i-1 < 0 ) || ( j - 1 < 0 )) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb (i-1) (j-1) m))
-;;
-
-let distance_lum_bas i j m =
-  if((i-1) < 0) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb (i-1) j m))
-;;
-
-let distance_lum_bas_droite i j m =
-  if((i-1 < 0) || (j+1 >= (largeur m)-1)) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb (i-1) (j+1) m))
-;;
-
-
-let distance_lum_droite i j m =
-  if((j+1) >= (largeur m)-1) then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb i (j+1) m))
-;;
-
-let distance_lum_haut_droite i j m =
-  if((j+1 >= (largeur m)-1) || (i+1 >= (hauteur m)-1))then
-    -1
-  else
-    abs((lum_rgb i j m) - (lum_rgb (i+1) (j+1) m))
-;;
-
-
-let is_noneg x =
-  if(x !=  -1) then
-    1
-  else
-    0
-;;
-
-let nb_voisins h b d g =
-  (is_noneg h) + (is_noneg b) + (is_noneg d) + (is_noneg g)
-;;
-
-(* 
-   methode de calcul de la distance de luminosite pour 4 Voisins
-   Appel: matrice_energie
-*)
-let distance_lum_4 i j m =
-  let haut = distance_lum_haut i j m in
-  let bas = distance_lum_bas i j m in
-  let droite = distance_lum_droite i j m in
-  let gauche = distance_lum_gauche i j m in
-  (haut + bas + droite + gauche)/(nb_voisins haut bas droite gauche)
-;;
-
-let distance_lum_8 i j m =
-
-  let haut = distance_lum_haut i j m in
-  let haut_gauche = distance_lum_haut_gauche i j m in
-  let gauche = distance_lum_gauche i j m in
-  let bas_gauche = distance_lum_bas_gauche i j m in
-  let bas = distance_lum_bas i j m in
-  let bas_droite = distance_lum_bas_droite i j m in
-  let droite = distance_lum_droite i j m in
-  let haut_droite = distance_lum_haut_droite i j m in
-  let a = haut_gauche + haut_droite + bas_droite + bas_gauche in
-  let b = nb_voisins haut_gauche haut_droite bas_droite bas_gauche in
-  let c = haut + bas + droite + gauche in
-  let d = nb_voisins haut  bas droite  gauche in
-  (a + c)/(b + d)
-;;
-
-let matrice_luminosite m = 
-  let aux = Array.make_matrix (hauteur m) (largeur m) m.(0).(0) in
-  for i = 0 to (hauteur m)-1 do
-    for j = 0 to (largeur m)-1 do
-      let  d = (distance_lum_8 i j m) in
-      aux.(i).(j) <- Graphics.rgb d d d;
-    done;
-  done;
-  aux
-;;
-*)
-
-(* Main **********************************************************************)
+(* Main *********************************************************************
+Draw the energy of the image
 let img = Ppm.load Sys.argv.(1);;
 Graphics.open_graph (" " ^ (str_largeur img) ^ "x" ^ (str_hauteur img) ^ "");;
-Graphics.draw_image (Graphics.make_image (matrice_energie img)) 0 0;;
-ignore(Graphics.read_key());;
+
+Graphics.draw_image (Graphics.make_image (matrice_luminosite img)) 0 0;;
+
+ignore(Graphics.read_key());
 Graphics.close_graph() ;;
+*)
+
+let tab = 
+  [|
+    [| 1; 4; 3; 5; 2 |];
+    [| 3; 2; 5; 2; 3 |];
+    [| 5; 2; 4; 2; 1 |];
+  |]
+;;
+
+print_tab tab;;
+print_string("\n");;
+print_tab (algo tab);;
