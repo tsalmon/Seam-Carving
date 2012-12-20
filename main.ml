@@ -1,14 +1,13 @@
 (*ocamlc graphics.cma ppm.cmo distance.ml main.ml -o projet && ./projet test-1.ppm*)
 open Distance;;
 open Graphics;;
-
+open Chemins;;
 (* Largeur image sous forme textuelle*)
 let str_largeur img =
   string_of_int(Array.length img.(0));;
 (* Hauteur image sous forme textuelle*)
 let str_hauteur img = 
   string_of_int(Array.length img);;
-
 
 (* Main ********************************************************************
 Draw the energy of the image
