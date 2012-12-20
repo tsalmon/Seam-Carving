@@ -37,3 +37,11 @@ let algo t  =
   done;
   resultat;
 ;;
+
+let parcours t x y =
+  let h = (Array.length t)-1 in
+  let w = (Array.length t.(0))-1 in
+  for i = 0 to (Array.length t)-1 do
+    print_string(string_of_int(t.(x).(y)) ^ "\n")
+  done
+;;

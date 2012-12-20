@@ -30,4 +30,4 @@ let tab =
 
 print_tab tab;;
 print_string("\n");;
-print_tab (algo tab);;
+parcours (algo tab) 2 1;;
