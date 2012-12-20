@@ -10,12 +10,12 @@ let str_hauteur img =
   string_of_int(Array.length img);;
 
 
-(* Main *********************************************************************
+(* Main ********************************************************************
 Draw the energy of the image
 let img = Ppm.load Sys.argv.(1);;
 Graphics.open_graph (" " ^ (str_largeur img) ^ "x" ^ (str_hauteur img) ^ "");;
 
-Graphics.draw_image (Graphics.make_image (matrice_luminosite img)) 0 0;;
+Graphics.draw_image (Graphics.make_image (lum_matrix img)) 0 0;;
 
 ignore(Graphics.read_key());
 Graphics.close_graph() ;;
