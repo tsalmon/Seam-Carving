@@ -6,11 +6,12 @@ let height img =
   Array.length img
 ;;
 
-let color_to_rgb c = (c asr 16,  (c asr 8) land 255, c land 255);;
-
-let soi x = 
-  string_of_int (x)
+let color_to_rgb c = 
+  (c asr 16,  (c asr 8) land 255, c land 255)
 ;;
+let iof x = int_of_float(x) ;;
+let foi y = float_of_int(y) ;;
+let soi x = string_of_int(x);;
 
 (*----------------------------------------------------------*
  *                  DISTANCE LUMINOSITY                     * 
@@ -27,13 +28,11 @@ let soi x =
  * Context: pixel p and p' are not out of the matrix
  * Use: calculation of the formula 
  *)
- 
 let lum_rgb i j m =
-  let iof x = int_of_float(x) in
-  let foi y = float_of_int(y) in
   let (r, g, b) = color_to_rgb m.(i).(j) in 
-  iof((0.2126 *. foi(r)) +. (0.7152 *. foi(g)) +. (0.0722 *. foi(b)))
+  0.2126 *. foi(r) +. 0.7152 *. foi(g) +. 0.0722 *. foi(b)
 ;;
+  
 
 (*
  * For all this function to 'dist_lum_top' to 'dist_lum_top_right':
@@ -41,59 +40,60 @@ let lum_rgb i j m =
  * Use :  give the dist between a pixel p and p'
  *)
 let dist_lum_top i j m =
-  if((i+1) >= (height m)-1) then
+  if( i = height m-1) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb (i+1) j m)) 	
+    abs(iof((lum_rgb i j m) -. (lum_rgb (i+1) j m))) 	
 ;;
-
+ 
 let dist_lum_top_left i j m =
-  if(((i+1) >= (height m)-1) || (j-1 < 0)) then
+  if((i = height m-1) || (j = 0)) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb (i+1) (j-1) m)) 	
+    abs(iof((lum_rgb i j m) -. (lum_rgb (i+1) (j-1) m))) 	
 ;;
 
 let dist_lum_left i j m =
-  if((j-1) < 0 ) then
+  if(j = 0 ) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb i (j-1) m))
+    abs(iof((lum_rgb i j m) -. (lum_rgb i (j-1) m)))
 ;;
 
 let dist_lum_bottom_left i j m =
-  if((i-1 < 0 ) || ( j - 1 < 0 )) then
+  if((i = 0 ) || ( j = 0 )) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb (i-1) (j-1) m))
+    abs(iof((lum_rgb i j m) -. (lum_rgb (i-1) (j-1) m)))
 ;;
 
 let dist_lum_bottom i j m =
-  if((i-1) < 0) then
+  if(i = 0) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb (i-1) j m))
+    abs(iof((lum_rgb i j m) -. (lum_rgb (i-1) j m)))
 ;;
 
 let dist_lum_bottom_right i j m =
-  if((i-1 < 0) || (j+1 >= (width m)-1)) then
+  if((i = 0) || (j = width m-1 )) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb (i-1) (j+1) m))
+    abs(iof((lum_rgb i j m) -. (lum_rgb (i-1) (j+1) m)))
 ;;
 
 let dist_lum_right i j m =
-  if((j+1) >= (width m)-1) then
+  if(j = width m-1) then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb i (j+1) m))
+    abs(iof((lum_rgb i j m) -. (lum_rgb i (j+1) m)))
 ;;
 
 let dist_lum_top_right i j m =
-  if((j+1 >= (width m)-1) || (i+1 >= (height m)-1))then
+  if((j = width m-1) || (i = height m-1))then
     -1
   else
-    abs((lum_rgb i j m) - (lum_rgb (i+1) (j+1) m))
+    abs(iof((lum_rgb i j m) -. (lum_rgb (i+1) (j+1) m)))
+;;
 
 (*
   Call by : nb_neig
@@ -102,6 +102,13 @@ let dist_lum_top_right i j m =
 let is_not_neg x =
   if(x !=  -1) then
     1
+  else
+    0
+;;
+
+let is_not_neg2 x =
+  if(x != -1) then
+    x
   else
     0
 ;;
@@ -123,7 +130,7 @@ let dist_lum_4 i j m =
   let bottom = dist_lum_bottom i j m in
   let right = dist_lum_right i j m in
   let left = dist_lum_left i j m in
-  (top + bottom + right + left)/(nb_neig top bottom right left)
+  (is_not_neg2(top) + is_not_neg2(bottom) + is_not_neg2(right) + is_not_neg2(left))/(nb_neig top bottom right left)
 ;;
 
 (*
@@ -153,11 +160,12 @@ let dist_lum_8 i j m =
   Use: give the energy of each pixel
 *)
 let lum_matrix m = 
-  let aux = Array.make_matrix (height m) (width m) m.(0).(0) in
+  let aux = Array.make_matrix (height m) (width m) 0 in
   for i = 0 to (height m)-1 do
     for j = 0 to (width m)-1 do
-      let  d = (dist_lum_4 i j m) in
-      aux.(i).(j) <- Graphics.rgb d d d;
+      let a = (height m)-1-i in
+      let b = (width m) -1-j in
+      aux.(a).(b) <- dist_lum_4 a b m;
     done;
   done;
   aux

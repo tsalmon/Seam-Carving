@@ -9,28 +9,32 @@ let str_largeur img =
 let str_hauteur img = 
   string_of_int(Array.length img);;
 
-(* Main ********************************************************************
-Draw the energy of the image
-let img = Ppm.load Sys.argv.(1);;
-Graphics.open_graph (" " ^ (str_largeur img) ^ "x" ^ (str_hauteur img) ^ "");;
+(* Main *******************************************************************)
 
-Graphics.draw_image (Graphics.make_image (lum_matrix img)) 0 0;;
+let img = (Ppm.load Sys.argv.(1));;
 
-ignore(Graphics.read_key());
+Graphics.open_graph (" " ^ string_of_int(width img) ^ "x" ^ string_of_int(height img) ^ "") ;;
+
+browser ( trace_path (lum_matrix img) ) 0 ( point_de_depart 0 0 0 (img) ) img ;;
+
+Graphics.draw_image (Graphics.make_image img) 0 0;;
+
+ignore(Graphics.read_key());;
 Graphics.close_graph() ;;
-*)
 
+(*
 let tab = 
   [|
-    [| 1; 4; 3; 5; 2 |];
+    [| 1; 4; 3; 5; 2 |]
     [| 3; 2; 5; 2; 3 |];
     [| 5; 2; 4; 2; 1 |];
   |]
 ;;
 
-print_tab tab;;
-print_string("\n");;
-let tab = algo tab ;;
-print_tab tab;;
-print_string("\n");;
-print_string(parcours tab 2 1);;
+print_tab img;;
+print_string('\n');;
+let tab = trace_path img ;;
+print_tab img;;
+print_string('\n');;
+Graphics.draw_image(browser img ((height img)-1) 1);;*)
+

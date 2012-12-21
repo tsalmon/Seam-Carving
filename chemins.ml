@@ -1,3 +1,5 @@
+open Graphics;;
+let soi x = string_of_int(x);;
 let min a b = if( a > b) then b else a ;;
 
 let print_tab t = 
@@ -9,6 +11,10 @@ let print_tab t =
   done
 ;;
 
+(* 
+   Call by : 
+   
+*)
 let min_tab t i j =
   let a = t.(i).(j) in
   if( (j > 0) && (j < (Array.length t.(0))-1)) then
@@ -27,9 +33,10 @@ let min_tab t i j =
 
 let min_tab_coord t i j =
   let a = t.(i).(j) in
-  if( (j > 0) && (j < (Array.length t.(0))-1)) then
+  if ((j > 0) && (j < (Array.length t.(0))-1)) then
     let b = t.(i).(j-1) in
     let c = t.(i).(j+1) in 
+    print_string(soi(b) ^ ", " ^ soi(a) ^ ", " ^ soi(c) ^ "\n");
     if( (min a b) = (min a c)) then
       j
     else
@@ -44,23 +51,46 @@ let min_tab_coord t i j =
       j-1
 ;;
 
-
-let algo t  = 
+(*
+ * Call by main
+ * Use : allow energy of neighboors
+ *)
+let trace_path t =
   let resultat = Array.make_matrix (Array.length t) (Array.length t.(0)) 0 in
-  for i = 0 to (Array.length t)-1 do
-    for j = 0 to (Array.length t.(0))-1 do
-      if(i = 0) then
-	resultat.(i).(j) <- t.(i).(j)
+  for i = 0 to (Array.length t-1) do
+    for j = 0 to (Array.length t.(0)-1) do
+      let a = Array.length t - 1 - i in
+      let b = Array.length t.(0) - 1 - j in
+      if(a = Array.length t - 1) then
+	resultat.(a).(b) <- t.(a).(b)
       else
-	resultat.(i).(j) <- t.(i).(j) + min_tab resultat (i-1) j 
+        resultat.(a).(b) <- t.(a).(b)+ min_tab resultat (a+1) (b)
     done
   done;
-  resultat;
+  resultat
 ;;
 
-let rec parcours t x y =
-  if( x = 0 ) then
-    "tab[" ^ string_of_int(x) ^ "][" ^ string_of_int(y) ^ "] : " ^ (string_of_int t.(x).(y)) ^ "\n"
+let color_to_rgb c = (c asr 16,  (c asr 8) land 255, c land 255);;
+
+let rec point_de_depart s x y t =
+  print_string( "t[" ^ soi(x) ^ "][" ^ soi(s) ^ "] = " ^ soi(t.(x).(s)) ^ "\n");
+  if (y < Array.length t.(0)) then
+    if(t.(x).(s) > t.(x).(y)) then
+      point_de_depart y x (y+1) t
+    else
+      point_de_depart s x (y+1) t
   else
-    "tab[" ^ string_of_int(x) ^ "][" ^ string_of_int(y) ^ "] : " ^ (string_of_int t.(x).(y)) ^ "\n" ^ (parcours t (x-1) (min_tab_coord t (x-1) y))
+    s
+;;
+
+(*
+ * Call by : main
+ * Use : browse the 'best way'
+ *)
+let rec browser t x y img =
+  img.(x).(y) <- Graphics.rgb 250 0 0; 
+  if (x+1 < (Array.length t)) then
+    browser t (x+1) (min_tab_coord t (x+1) y ) img
+  else
+    ()
 ;;
